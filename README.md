@@ -13,7 +13,7 @@ This is the documentation for the backend assignment application.
 2. Navigate to the project directory:
 
     ```shell
-    cd assignment_1
+    cd assignment_3
     ```
 
 3. Install the dependencies:
