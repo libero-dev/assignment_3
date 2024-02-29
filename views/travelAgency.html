@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Travel Agency - Discover tours</title>
+  <style>
+    body {
+      padding-top: 56px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+
+      color: #333;
+
+    }
+
+    .card {
+      width: 100%;
+    }
+
+    .tour-form {
+      margin-top: 20px;
+    }
+
+    .result-container {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+    }
+
+    .footer {
+      margin-top: auto;
+      background-color: #343a40;
+
+      padding: 20px;
+      color: #fff;
+
+    }
+
+    #tourDetails {
+      margin-top: 20px;
+    }
+
+    #clearHistoryBtn {
+      margin-top: 10px;
+
+      margin-left: 0;
+
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="/">Travel Agency</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/travelagency">Discover tours</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h2 style="color: #007bff;">Browse and calculate your tour details</h2>
+    <form id="tourForm" class="tour-form">
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="country">Country:</label>
+          <select class="form-control" id="country" name="country" required>
+            <option value="" selected disabled>Select Country</option>
+            <option value="USA">United States</option>
+            <option value="France">France</option>
+            <option value="Japan">Japan</option>
+            <option value="Australia">Australia</option>
+            <option value="Brazil">Brazil</option>
+
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="city">City:</label>
+          <select class="form-control" id="city" name="city" required>
+
+          </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="hotel">Hotel:</label>
+          <select class="form-control" id="hotel" name="hotel" required>
+            <option value="" selected disabled>Select Hotel Rating</option>
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="arrivalDate">Arrival Date:</label>
+          <input type="date" class="form-control" id="arrivalDate" name="arrivalDate" required>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="departureDate">Departure Date:</label>
+          <input type="date" class="form-control" id="departureDate" name="departureDate" required>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="adults">Adults:</label>
+          <input type="number" class="form-control" id="adults" name="adults" min="1" required>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="children">Children:</label>
+          <input type="number" class="form-control" id="children" name="children" min="0" required>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" style="background-color: #007bff;" onclick="showTour()">Show
+        Tour</button>
+    </form>
+
+    <div class="mt-4 result-container" id="tourResult">
+
+    </div>
+
+    <div class="mt-4 result-container" id="tourDetails" style="display: none;">
+
+      <p id="tourInfo"></p>
+      <img id="cityImage" src="" alt="City Image" style="max-width: 100%; height: auto;">
+
+
+      <button type="button" class="btn btn-primary mt-2" id="calculatePriceBtn" onclick="calculatePrice()">Calculate
+        Price</button>
+    </div>
+    <div id="historyContainer" class="mt-4 result-container"></div>
+
+
+    <button type="button" class="btn btn-danger" id="clearHistoryBtn" onclick="clearHistory()">Delete TourHistory</button>
+
+  
+
+  </div>
+
+  <div class="modal fade" id="editTourModal" tabindex="-1" role="dialog" aria-labelledby="editTourModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editTourModalLabel">Edit Tour</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" id="modalTourDetails" rows="5"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveEditedTour()">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <input type="text" id="searchInput" oninput="displayHistory()" placeholder="Search Tour History">
+
+
+
+
+
+  <footer class="footer text-center">
+    <p>© 2024  Kalybekov Sultan Beibarys| SE-2209</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    function saveToHistory(tourDetails) {
+      console.log('Saving to history:', tourDetails);
+
+    const timestamp = new Date().toLocaleString();
+    const tourHistoryItem = {
+        timestamp: timestamp,
+        details: tourDetails
+    };
+
+    let tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+
+    tourHistory.push(tourHistoryItem);
+
+    localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
+
+    saveToJSONFile(tourHistory);
+
+    console.log('Current Local Storage:', localStorage.getItem('tourHistory'));
+    }
+
+    function saveToJSONFile(data) {
+    const jsonData = JSON.stringify(data, null, 2);
+
+    const blob = new Blob([jsonData], { type: 'application/json' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tourHistory.json';
+
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+}
+
+    function displayHistory() {
+      console.log('Displaying history');
+
+    const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const filteredHistory = tourHistory.filter(item => item.details.toLowerCase().includes(searchInput));
+
+    console.log('Fetched History from Local Storage:', tourHistory);
+
+    const historyContainer = document.getElementById('historyContainer');
+    historyContainer.innerHTML = '<h2>Tour History</h2>';
+
+    if (filteredHistory.length === 0) {
+        historyContainer.innerHTML += '<p>No matching tour history available.</p>';
+    } else {
+        const fragment = document.createDocumentFragment();
+        filteredHistory.forEach((item, index) => {
+            const historyItem = document.createElement('div');
+            historyItem.classList.add('history-item');
+            historyItem.innerHTML = `
+                <p><strong>${item.timestamp}:</strong></p>
+                <p>${item.details}</p>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="editTour('${item.details}', ${index})">Edit Tour</button>
+            `;
+            fragment.appendChild(historyItem);
+        });
+
+        historyContainer.appendChild(fragment);
+    }
+    }
+
+
+    window.onload = function () {
+      displayHistory();
+    };
+
+    
+
+
+    function calculatePrice() {
+
+      alert('Placeholder: Implement the logic for calculating tour price.');
+    }
+
+    let cityImageUrl = 'https://via.placeholder.com/800x400';
+
+
+    function showTour() {
+      const country = document.getElementById('country').value;
+      const city = document.getElementById('city').value;
+      const hotelRating = document.getElementById('hotel').value;
+      const arrivalDate = document.getElementById('arrivalDate').value;
+      const departureDate = document.getElementById('departureDate').value;
+      const adults = document.getElementById('adults').value;
+      const children = document.getElementById('children').value;
+
+
+      if (!country || !city || !hotelRating || !arrivalDate || !departureDate || !adults || !children) {
+        alert('Please fill in all fields before showing the tour.');
+        return;
+      }
+
+
+      const tourDetailsContainer = document.getElementById('tourDetails');
+      tourDetailsContainer.style.display = 'block';
+
+
+      const tourInfo = document.getElementById('tourInfo');
+      tourInfo.innerHTML = `<h4>Tour details</h4>Country: ${country}<br>City: ${city}<br>Hotel Rating: ${hotelRating} Stars<br>Arrival Date: ${arrivalDate}<br>Departure Date: ${departureDate}<br>Adults: ${adults}<br>Children: ${children}`;
+
+
+      const cityImage = document.getElementById('cityImage');
+
+
+      switch (city) {
+        case 'New York':
+          cityImageUrl = 'images/new_york.jpg';
+          break;
+        case 'Paris':
+          cityImageUrl = 'images/paris.jpg';
+          break;
+        case 'Tokyo':
+          cityImageUrl = 'images/tokyo.jpg';
+          break;
+        case 'Sydney':
+          cityImageUrl = 'images/sydney.jpg';
+          break;
+        case 'Salvador':
+          cityImageUrl = 'images/salvador.jpg';
+          break;
+        default:
+          cityImage.src = 'https://via.placeholder.com/800x400';
+      }
+
+      cityImage.src = cityImageUrl;
+
+
+      const apiKey = '7156bc9162d307fa166b4edb4ea49c72';
+      const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      fetch(weatherApiUrl)
+        .then(response => response.json())
+        .then(data => {
+
+          const weatherContainer = document.createElement('div');
+          weatherContainer.innerHTML = '<h4>Weather Information</h4>';
+
+
+          const temperature = data.main.temp;
+          const description = data.weather[0].description;
+
+          const weatherInfo = document.createElement('p');
+          weatherInfo.innerHTML = `Temperature: ${temperature}°C<br>Weather: ${description}`;
+          weatherContainer.appendChild(weatherInfo);
+
+
+          const widgetsContainer = document.createElement('div');
+          widgetsContainer.innerHTML = `
+            <p>Wind: ${data.wind.speed} m/s</p>
+            <p>Humidity: ${data.main.humidity}%</p>
+            <p>Pressure: ${data.main.pressure} hPa</p>
+            <p>Weather Icon:</p>
+            <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather Icon">
+          `;
+          weatherContainer.appendChild(widgetsContainer);
+
+
+          tourInfo.appendChild(weatherContainer);
+        })
+        .catch(error => {
+          console.error('Error fetching weather data:', error);
+        });
+
+      const calculatePriceBtn = document.getElementById('calculatePriceBtn');
+      calculatePriceBtn.style.display = 'block';
+    }
+
+    document.getElementById('country').addEventListener('change', function () {
+      const country = this.value;
+      const cityDropdown = document.getElementById('city');
+      cityDropdown.innerHTML = '';
+      if (country === 'USA') {
+        addCityOption(cityDropdown, 'New York', 'New York');
+      } else if (country === 'France') {
+        addCityOption(cityDropdown, 'Paris', 'Paris');
+      } else if (country === 'Japan') {
+        addCityOption(cityDropdown, 'Tokyo', 'Tokyo');
+      } else if (country === 'Australia') {
+        addCityOption(cityDropdown, 'Sydney', 'Sydney');
+      } else if (country === 'Brazil') {
+        addCityOption(cityDropdown, 'Salvador', 'Salvador');
+      } else {
+        cityDropdown.innerHTML = '<option value="" selected disabled>No cities available</option>';
+      }
+    });
+
+
+    function addCityOption(selectElement, value, text) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.text = text;
+      selectElement.appendChild(option);
+    }
+
+
+
+    function calculatePrice() {
+      const country = document.getElementById('country').value;
+      const city = document.getElementById('city').value;
+      const hotelRating = document.getElementById('hotel').value;
+      const arrivalDate = document.getElementById('arrivalDate').value;
+      const departureDate = document.getElementById('departureDate').value;
+      const adults = document.getElementById('adults').value;
+      const children = document.getElementById('children').value;
+
+
+      if (!country || !city || !hotelRating || !arrivalDate || !departureDate || !adults || !children) {
+        alert('Please fill in all fields before showing the tour.');
+        return;
+      }
+
+      const tourDetailsContainer = document.getElementById('tourDetails');
+      tourDetailsContainer.style.display = 'block';
+
+      const tourInfo = document.getElementById('tourInfo');
+      tourInfo.innerHTML = `<h4>Tour details</h4> Country: ${country}<br>City: ${city}<br>Hotel Rating: ${hotelRating} Stars<br>Arrival Date: ${arrivalDate}<br>Departure Date: ${departureDate}<br>Adults: ${adults}<br>Children: ${children}`;
+
+      const cityImage = document.getElementById('cityImage');
+      cityImage.src = 'https://via.placeholder.com/800x400';
+      cityImage.src = cityImageUrl;
+
+
+
+      const basePricePerPerson = 100;
+      const additionalChildDiscount = 0.5;
+      const hotelRatingMultiplier = 1.2;
+
+      const totalAdultsPrice = adults * basePricePerPerson;
+      const totalChildrenPrice = children * basePricePerPerson * (1 - additionalChildDiscount);
+      const totalHotelPrice = hotelRating * hotelRatingMultiplier;
+
+      const totalPrice = totalAdultsPrice + totalChildrenPrice + totalHotelPrice;
+
+      const priceResultContainer = document.getElementById('tourResult');
+      priceResultContainer.innerHTML = `
+      <h3>Total Tour Price</h3>
+      <p>Total Adults Price: $${totalAdultsPrice}</p>
+      <p>Total Children Price: $${totalChildrenPrice}</p>
+      <p>Total Hotel Price: $${totalHotelPrice}</p>
+      <p><strong>Total Price: $${totalPrice}</strong></p>
+
+      <button type="button" class="btn btn-success mt-2" onclick="bookNow()">Book Now</button>
+    `;
+    }
+
+    function bookNow() {
+      const country = document.getElementById('country').value;
+      const city = document.getElementById('city').value;
+      const hotelRating = document.getElementById('hotel').value;
+      const arrivalDate = document.getElementById('arrivalDate').value;
+      const departureDate = document.getElementById('departureDate').value;
+      const adults = document.getElementById('adults').value;
+      const children = document.getElementById('children').value;
+
+      if (!country || !city || !hotelRating || !arrivalDate || !departureDate || !adults || !children) {
+        alert('Please fill in all fields before booking the tour.');
+        return;
+      }
+
+      const tourDetails = `Country: ${country}, City: ${city}, Hotel Rating: ${hotelRating} Stars, Arrival Date: ${arrivalDate}, Departure Date: ${departureDate}, Adults: ${adults}, Children: ${children}`;
+
+      saveToHistory(tourDetails);
+
+      displayHistory();
+
+      alert('Tour booked successfully!');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('tourHistory');
+
+      displayHistory();
+    }
+
+
+    let editedIndex = -1;
+
+function editTour(tourDetails, index) {
+  editedIndex = index;
+
+  const modalTourDetails = document.getElementById('modalTourDetails');
+  modalTourDetails.value = tourDetails;
+
+  $('#editTourModal').modal('show');
+}
+  
+function saveEditedTour() {
+    const editedTourDetails = document.getElementById('modalTourDetails').value;
+
+    if (editedIndex !== -1) {
+      const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+
+      tourHistory[editedIndex].details = editedTourDetails;
+
+      localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
+
+      editedIndex = -1;
+
+      $('#editTourModal').modal('hide');
+
+      displayHistory();
+    }
+  }
+
+  </script>
+
+</body>
+
+</html>
