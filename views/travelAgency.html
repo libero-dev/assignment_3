@@ -99,7 +99,7 @@
         <div class="form-group col-md-4">
           <label for="city">City:</label>
           <select class="form-control" id="city" name="city" required>
-
+            <option value="" selected disabled>Select city</option>
           </select>
         </div>
         <div class="form-group col-md-4">
@@ -154,9 +154,10 @@
     <div id="historyContainer" class="mt-4 result-container"></div>
 
 
-    <button type="button" class="btn btn-danger" id="clearHistoryBtn" onclick="clearHistory()">Delete TourHistory</button>
+    <button type="button" class="btn btn-danger" id="clearHistoryBtn" onclick="clearHistory()">Delete
+      TourHistory</button>
 
-  
+
 
   </div>
 
@@ -190,7 +191,7 @@
 
 
   <footer class="footer text-center">
-    <p>© 2024  Kalybekov Sultan Beibarys| SE-2209</p>
+    <p>© 2024 Kalybekov Sultan Beibarys| SE-2209</p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -201,68 +202,68 @@
     function saveToHistory(tourDetails) {
       console.log('Saving to history:', tourDetails);
 
-    const timestamp = new Date().toLocaleString();
-    const tourHistoryItem = {
+      const timestamp = new Date().toLocaleString();
+      const tourHistoryItem = {
         timestamp: timestamp,
         details: tourDetails
-    };
+      };
 
-    let tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+      let tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
 
-    tourHistory.push(tourHistoryItem);
+      tourHistory.push(tourHistoryItem);
 
-    localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
+      localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
 
-    saveToJSONFile(tourHistory);
+      saveToJSONFile(tourHistory);
 
-    console.log('Current Local Storage:', localStorage.getItem('tourHistory'));
+      console.log('Current Local Storage:', localStorage.getItem('tourHistory'));
     }
 
     function saveToJSONFile(data) {
-    const jsonData = JSON.stringify(data, null, 2);
+      const jsonData = JSON.stringify(data, null, 2);
 
-    const blob = new Blob([jsonData], { type: 'application/json' });
+      const blob = new Blob([jsonData], { type: 'application/json' });
 
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'tourHistory.json';
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tourHistory.json';
 
-    document.body.appendChild(a);
-    a.click();
+      document.body.appendChild(a);
+      a.click();
 
-    document.body.removeChild(a);
-}
+      document.body.removeChild(a);
+    }
 
     function displayHistory() {
       console.log('Displaying history');
 
-    const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+      const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
 
-    const searchInput = document.getElementById('searchInput').value.toLowerCase();
-    const filteredHistory = tourHistory.filter(item => item.details.toLowerCase().includes(searchInput));
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const filteredHistory = tourHistory.filter(item => item.details.toLowerCase().includes(searchInput));
 
-    console.log('Fetched History from Local Storage:', tourHistory);
+      console.log('Fetched History from Local Storage:', tourHistory);
 
-    const historyContainer = document.getElementById('historyContainer');
-    historyContainer.innerHTML = '<h2>Tour History</h2>';
+      const historyContainer = document.getElementById('historyContainer');
+      historyContainer.innerHTML = '<h2>Tour History</h2>';
 
-    if (filteredHistory.length === 0) {
+      if (filteredHistory.length === 0) {
         historyContainer.innerHTML += '<p>No matching tour history available.</p>';
-    } else {
+      } else {
         const fragment = document.createDocumentFragment();
         filteredHistory.forEach((item, index) => {
-            const historyItem = document.createElement('div');
-            historyItem.classList.add('history-item');
-            historyItem.innerHTML = `
+          const historyItem = document.createElement('div');
+          historyItem.classList.add('history-item');
+          historyItem.innerHTML = `
                 <p><strong>${item.timestamp}:</strong></p>
                 <p>${item.details}</p>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="editTour('${item.details}', ${index})">Edit Tour</button>
             `;
-            fragment.appendChild(historyItem);
+          fragment.appendChild(historyItem);
         });
 
         historyContainer.appendChild(fragment);
-    }
+      }
     }
 
 
@@ -270,7 +271,7 @@
       displayHistory();
     };
 
-    
+
 
 
     function calculatePrice() {
@@ -481,32 +482,32 @@
 
     let editedIndex = -1;
 
-function editTour(tourDetails, index) {
-  editedIndex = index;
+    function editTour(tourDetails, index) {
+      editedIndex = index;
 
-  const modalTourDetails = document.getElementById('modalTourDetails');
-  modalTourDetails.value = tourDetails;
+      const modalTourDetails = document.getElementById('modalTourDetails');
+      modalTourDetails.value = tourDetails;
 
-  $('#editTourModal').modal('show');
-}
-  
-function saveEditedTour() {
-    const editedTourDetails = document.getElementById('modalTourDetails').value;
-
-    if (editedIndex !== -1) {
-      const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
-
-      tourHistory[editedIndex].details = editedTourDetails;
-
-      localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
-
-      editedIndex = -1;
-
-      $('#editTourModal').modal('hide');
-
-      displayHistory();
+      $('#editTourModal').modal('show');
     }
-  }
+
+    function saveEditedTour() {
+      const editedTourDetails = document.getElementById('modalTourDetails').value;
+
+      if (editedIndex !== -1) {
+        const tourHistory = JSON.parse(localStorage.getItem('tourHistory')) || [];
+
+        tourHistory[editedIndex].details = editedTourDetails;
+
+        localStorage.setItem('tourHistory', JSON.stringify(tourHistory));
+
+        editedIndex = -1;
+
+        $('#editTourModal').modal('hide');
+
+        displayHistory();
+      }
+    }
 
   </script>
 

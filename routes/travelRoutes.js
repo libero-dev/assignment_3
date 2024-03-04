@@ -23,4 +23,3 @@ function calculateTour(data) {
 }
 
 module.exports = {router, calculateTour};
-
